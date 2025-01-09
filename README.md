@@ -1,6 +1,13 @@
-# My Helm Chart
+# OCP on CNV Helm Chart
+This Helm Chart provides an OpenShift on OpenShift Virtualization deployment, using [fakefish](https://github.com/openshift-metal3/fakefish) as a Redfish API frontend, to manage the lifecycle of virtual machines.
 
-This Helm chart deploys OpenShift resources, including a Virtual Machine, using customizable values defined in the `values.yaml` file.
+Included with this Helm chart are the following resources:
+- Virtual Machines
+- Fakefish Deployment
+- Service Endpoints for Fakefish
+- Routes for Fakefish (to be controlled via the same cluster, or other external clusters)
+
+Please do not use this in production or use this with a cluster that is connected to the internet (which could haphazardly publish your Redfish Endpoints). ***YOU HAVE BEEN WARNED!***
 
 ## Prerequisites
 
