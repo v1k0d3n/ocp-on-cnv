@@ -1,0 +1,22 @@
+{{- $vm := .Values.VirtualMachine -}}
+{{- range $i, $e := until (int $vm.count) }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fakefish-{{ printf "%s-%02d" $vm.baseName $i }}-{{ $.Release.Namespace }}
+  namespace: {{ $.Release.Namespace }}
+  labels:
+{{- range $key, $value := $.Values.common.metadata.labels }}
+    {{ $key }}: {{ $value }}
+{{- end }}
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      port: 9000
+      targetPort: 9000
+  selector:
+    app: fakefish-{{ printf "%s-%02d" $vm.baseName $i }}-{{ $.Release.Namespace }}
+  type: LoadBalancer
+{{- end }}

@@ -1,0 +1,34 @@
+cluster:
+  name: demo
+  domain: ai.ocp.run
+
+common:
+  metadata:
+    labels:
+      environment: development
+      owner: v1k0d3n
+      demo: ztp-cnv
+    annotations:
+      description: "This cluster was created by the ocp-on-cnv Helm chart"
+
+fakefish:
+  image: "quay.io/bjozsa-redhat/fakefish-kubevirt:v4.17.6" 
+
+VirtualMachine:
+  baseName: helm-ztp-node
+  count: 3
+  resources:
+    cpuCount: 20
+    memoryCount: 48Gi
+    disks:
+      - name: disk1
+        diskSize: 120Gi
+      - name: disk2
+        diskSize: 100Gi
+    storageClass: lvms-vg1-immediate
+    network:
+      networkName: v0003-ens8f1-access
+      baseMAC: "00:50:56:96:50"
+
+secret:
+  kubeconfigContent: ""

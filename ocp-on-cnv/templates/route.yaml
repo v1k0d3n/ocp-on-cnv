@@ -1,0 +1,23 @@
+{{- $vm := .Values.VirtualMachine -}}
+{{- range $i, $e := until (int $vm.count) }}
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: fakefish-{{ printf "%s-%02d" $vm.baseName $i }}-{{ $.Release.Namespace }}
+  namespace: {{ $.Release.Namespace }}
+  labels:
+{{- range $key, $value := $.Values.common.metadata.labels }}
+    {{ $key }}: {{ $value }}
+{{- end }}
+spec:
+  host: fakefish-{{ printf "%s-%02d" $vm.baseName $i }}-{{ $.Release.Namespace }}.apps.{{ $.Values.cluster.name }}.{{ $.Values.cluster.domain }}
+  to:
+    kind: Service
+    name: fakefish-{{ printf "%s-%02d" $vm.baseName $i }}-{{ $.Release.Namespace }}
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Allow
+{{- end }}

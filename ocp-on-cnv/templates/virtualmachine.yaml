@@ -1,0 +1,61 @@
+{{- $vm := .Values.VirtualMachine -}}
+{{- range $i, $e := until (int $vm.count) }}
+---
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  name: {{ printf "%s-%02d" $vm.baseName $i }}
+  namespace: {{ $.Release.Namespace }}
+  labels:
+{{- range $key, $value := $.Values.common.metadata.labels }}
+    {{ $key }}: {{ $value }}
+{{- end }}
+spec:
+  dataVolumeTemplates:
+{{- range $disk := $vm.resources.disks }}
+    - metadata:
+        name: {{ printf "%s-%02d-%s" $vm.baseName $i $disk.name }}
+      spec:
+        source:
+          blank: {}
+        storage:
+          resources:
+            requests:
+              storage: {{ $disk.diskSize }}
+          storageClassName: {{ $vm.resources.storageClass }}
+{{- end }}
+  running: false
+  template:
+    metadata:
+      labels:
+{{- range $key, $value := $.Values.common.metadata.labels }}
+        {{ $key }}: {{ $value }}
+{{- end }}
+    spec:
+      domain:
+        cpu:
+          cores: {{ $vm.resources.cpuCount }}
+        memory:
+          guest: {{ $vm.resources.memoryCount }}
+        devices:
+          disks:
+{{- range $disk := $vm.resources.disks }}
+            - name: {{ $disk.name }}
+              disk:
+                bus: virtio
+{{- end }}
+          interfaces:
+            - name: {{ printf "%s-%02d-eth0" $vm.baseName $i }}
+              bridge: {}
+              macAddress: {{ printf "%s:%02x" $vm.resources.network.baseMAC $i }}
+      networks:
+        - name: {{ printf "%s-%02d-eth0" $vm.baseName $i }}
+          multus:
+            networkName: {{ $vm.resources.network.networkName }}
+      volumes:
+{{- range $disk := $vm.resources.disks }}
+        - name: {{ $disk.name }}
+          dataVolume:
+            name: {{ printf "%s-%02d-%s" $vm.baseName $i $disk.name }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,8 @@
+You've just installed the Helm chart: {{ .Chart.Name }}.
+The release for this chart is: {{ .Release.Name }}.
+
+To retrieve the names and MAC addresses for the VMs, use the following command:
+oc get vm -o "custom-columns=NAME:.metadata.name,MAC:.spec.template.spec.domain.devices.interfaces[0].macAddress" -n {{ .Release.Namespace }}
+
+To retrieve the the redfish endpoints associated with the VMs, use the following command:
+oc get route -n {{ .Release.Namespace }}
