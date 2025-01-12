@@ -2,6 +2,7 @@
 This Helm Chart provides an OpenShift on OpenShift Virtualization deployment, using [fakefish](https://github.com/openshift-metal3/fakefish) as a Redfish API frontend, to manage the lifecycle of virtual machines.
 
 Included with this Helm chart are the following resources:
+
 - Virtual Machines
 - Fakefish Deployment
 - Service Endpoints for Fakefish
@@ -52,6 +53,9 @@ You can customize the deployment by modifying the `values.yaml` file. The follow
   - `common.metadata.labels`: These labels will be applied "as is" to all resources for the Helm release
   - `common.metadata.annotations`: Annotations will also be applied "as is" to all the resources for the Helm release
 
+- **Fakefish Image**
+  - `fakefish.image`: The image to use for the fakefish API service.
+
 - **Virtual Machine Configuration**
   - `VirtualMachine.baseName`: Base name for the Virtual Machine
   - `VirtualMachine.count`: Number of Virtual Machines to create
@@ -61,6 +65,19 @@ You can customize the deployment by modifying the `values.yaml` file. The follow
   - `VirtualMachine.resources.storageClass`: `StorageClass` that will be used for the disks
   - `VirtualMachine.resources.network.networkName`: This is the name of the NetworkAttachmentDefinition which will be used for the VM.
   - `VirtualMachine.resources.network.baseMAC`: This base MAC address will be used for all of the resources. Any additional resources 00-99 will be added to the base MAC address.
+
+- **Service Configuration**
+  - `service.metalLBEnabled`: conditional that turns on or off MetalLB `annotations` for the Service objects.
+  - `service.IPAddressPool`: Name of the MetalLB IP Address Pool to use (configures `annotations.metallb.universe.tf/address-pool`).
+  - `service.loadBalancerIPs`: List of IPs to use for the LoadBalancer service (configures `annotations.metallb.universe.tf/loadBalancerIPs`).
+
+- **Route Configuration**
+  - `route.enabled`: conditional that turns on or off the routes for the Redfish/Fakefish service.
+  - `route.port.targetPort`: The target port for the route.
+  - `route.tls.termination`: The TLS termination policy for the route.
+  - `route.tls.insecureEdgeTerminationPolicy`: The insecure edge termination policy for the route.
+
+   The route configuration section may be turned into a map at some point in the future, which is in-line with the way that labels and annotations are handled today (currently it's only using single values in the Charts `values.yaml` file).
 
 - **Secrets Configuration**
   - `secret.kubeconfigContent`: This will normally be left blank and provided at runtime with the install example (above), however if you're feeling spicy you can place your Base64 encoded kubeconfig output here instead.
