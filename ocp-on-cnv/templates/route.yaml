@@ -1,3 +1,4 @@
+{{- if .Values.route.enabled }}
 {{- $vm := .Values.VirtualMachine -}}
 {{- range $i, $e := until (int $vm.count) }}
 ---
@@ -16,8 +17,9 @@ spec:
     kind: Service
     name: fakefish-{{ printf "%s-%02d" $vm.baseName $i }}-{{ $.Release.Namespace }}
   port:
-    targetPort: http
+    targetPort: {{ $.Values.route.port.targetPort }}
   tls:
-    termination: edge
-    insecureEdgeTerminationPolicy: Allow
+    termination: {{ $.Values.route.tls.termination }}
+    insecureEdgeTerminationPolicy: {{ $.Values.route.tls.insecureEdgeTerminationPolicy }}
+{{- end }}
 {{- end }}

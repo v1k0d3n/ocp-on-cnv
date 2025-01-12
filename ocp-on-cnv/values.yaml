@@ -30,5 +30,21 @@ VirtualMachine:
       networkName: v0003-ens8f1-access
       baseMAC: "00:50:56:96:50"
 
+service:
+  metalLBEnabled: false
+  IPAddressPool: ippool-sample-01
+  loadBalancerIPs:
+    helm-ztp-node-00: "10.50.0.50"
+    helm-ztp-node-01: "10.50.0.51"
+    helm-ztp-node-02: "10.50.0.52"
+
+route:
+  enabled: true
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Allow
+
 secret:
   kubeconfigContent: ""
