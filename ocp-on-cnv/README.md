@@ -7,7 +7,9 @@ Included with this Helm chart are the following resources:
 - Service Endpoints for Fakefish
 - Routes for Fakefish (to be controlled via the same cluster, or other external clusters)
 
-Please do not use this in production or use this with a cluster that is connected to the internet (which could haphazardly publish your Redfish Endpoints). ***YOU HAVE BEEN WARNED!***
+**WARNING:** **DO NOT USE THIS IN PRODUCTION!** <br>
+
+**NOTICE:** ***If you ***do not know what you're doing***, **you can expose your Redfish APIs to the internet with no protection**! This is because, by default, this Chart leverages OpenShift routes to expose the Redfish endpoints as (OpenShift would normally provide). If your cluster is exposed to the internet directly, then you want to use the settings listed in the [Networking Considerations](./#networking-considerations) section of this README.md***
 
 ## Prerequisites
 
@@ -62,6 +64,32 @@ You can customize the deployment by modifying the `values.yaml` file. The follow
 
 - **Secrets Configuration**
   - `secret.kubeconfigContent`: This will normally be left blank and provided at runtime with the install example (above), however if you're feeling spicy you can place your Base64 encoded kubeconfig output here instead.
+
+## Networking Considerations
+
+Normally, if your cluster is not exposed to the internet directly, it would be fine to use this chart "as-is" (leveraging the OpenShift routes). However, if your cluster is exposed to the internet directly, you may want to consider the following changes to your `values.yaml` file:
+
+```yaml
+service:
+  metalLBEnabled: true
+  IPAddressPool: ippool-sample-01
+  loadBalancerIPs:
+    helm-ztp-node-00: "10.50.0.50"
+    helm-ztp-node-01: "10.50.0.51"
+    helm-ztp-node-02: "10.50.0.52"
+
+route:
+  enabled: false
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Allow
+```
+
+*Notice that both `route.enabled=false` and `service.metalLBEnabled=true` changes have been made, when comparing with the default settings found in [`values.yaml`](./ocp-on-cnv/values.yaml)*
+
+But to do the above, you need to have MetalLB installed and configured on your cluster. If you do not have MetalLB installed, you can follow the instructions on [Red Hat's MetalLB documetnation](https://docs.openshift.com/container-platform/4.17/networking/networking_operators/metallb-operator/metallb-operator-install.html) or [MetalLB's documentation](https://metallb.universe.tf/).
 
 ## Usage
 
