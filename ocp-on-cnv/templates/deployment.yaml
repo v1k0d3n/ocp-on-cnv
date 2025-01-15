@@ -30,7 +30,7 @@ spec:
             - disabled
           env:
             - name: KUBECONFIG
-              value: /var/tmp/{{ $.Values.cluster.name }}.{{ $.Values.cluster.domain }}-kubeconfig
+              value: /var/tmp/kubeconfig
           volumeMounts:
             - name: kubevirt-kubeconfig
               mountPath: /var/tmp/
