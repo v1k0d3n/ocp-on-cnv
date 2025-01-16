@@ -164,3 +164,15 @@ Waiting for ISO to be imported [8/60]
 ```
 
 If you see the error above, then you will need to add the `disableVirtualMediaTLS: true` line item to your `Provisioning` object. In the error message above, `192.168.1.172` is the remote ACM server.
+
+If you already have ACM deployed, you can `patch` the current in-place `Provisioning` object with the following command:
+
+```bash
+oc patch provisioning provisioning-configuration --type merge -p '{"spec":{"disableVirtualMediaTLS": true}}'
+```
+
+Follow this up with a `rollout` command for the `metal3-state` deployment:
+
+```bash
+oc rollout restart $(oc get deployments -n openshift-machine-api -l baremetal.openshift.io/cluster-baremetal-operator=metal3-state -o name --no-headers=true) -n openshift-machine-api
+```
