@@ -129,3 +129,38 @@ To uninstall the chart, use the following command:
 ```bash
 helm uninstall <release-name>
 ```
+
+## Special Considerations
+
+### Multi-Cluster Deployments with ACM
+
+If you're attempting to use this chart across multiple clusters, this project will work just fine. There is a consideration that you will need to take into account, andd this is why I suggest using this chart for _development purposes_ and not for production environments.
+
+On the ACM-side, you may need to add the following line item to your `Provisioning` object:
+
+```yaml
+apiVersion: metal3.io/v1alpha1
+kind: Provisioning
+metadata:
+  name: provisioning-configuration
+spec:
+  disableVirtualMediaTLS: true     # <---- THIS LINE HERE
+```
+
+This suggestion has been made previously when using ACM with Supermicro X11 servers (read the following link [HERE](https://docs.openshift.com/container-platform/4.16/edge_computing/ztp-deploying-far-edge-sites.html#ztp-troubleshooting-ztp-gitops-supermicro-tls_ztp-deploying-far-edge-sites) for more information).
+
+**How to identify if you need this recommended fix:** <br>
+You can identify if you need this fix by checking the logs for the fakefish deployment (pod). If you see the following error message:
+
+```bash
+Waiting for ISO to be imported [8/60]
+++ oc -n acm-ocpv get pvc helm-ztp-node-00-bootiso -o 'jsonpath={.metadata.annotations.cdi\.kubevirt\.io/storage\.condition\.running\.message}'
++ STATUS='Unable to connect to http data source: HTTP request errored: Get "https://192.168.1.172:6183/redfish/boot-7847b914-f008-4969-9196-6d58ee165204.iso": tls: failed to verify certificate: x509: cannot validate certificate for 192.168.1.172 because it doesn'\''t contain any IP SANs'
++ '[' 0 -ne 0 ']'
++ [[ Unable to connect to http data source: HTTP request errored: Get "https://192.168.1.172:6183/redfish/boot-7847b914-f008-4969-9196-6d58ee165204.iso": tls: failed to verify certificate: x509: cannot validate certificate for 192.168.1.172 because it doesn't contain any IP SANs != \I\m\p\o\r\t\ \C\o\m\p\l\e\t\e ]]
++ WAIT=10
++ sleep 2
++ '[' 10 -ge 60 ']'
+```
+
+If you see the error above, then you will need to add the `disableVirtualMediaTLS: true` line item to your `Provisioning` object. In the error message above, `192.168.1.172` is the remote ACM server.
