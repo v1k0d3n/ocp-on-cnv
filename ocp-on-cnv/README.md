@@ -26,17 +26,10 @@ To install this Helm chart, you need to first ensure you've met the prerequisite
 
 1. Clone this repository.
 
-2. Make sure that the `kubeconfig` for the cluster you want to install this chart to is exported, and in order to dynamically pass the `kubeconfig` to the chart as a base64 encoded string, you need run these commands (example shown below):
+2. Install the chart with the following command (you can use `--debug`, if you wish):
 
    ```bash
-   export KUBECONFIG="/Users/v1k0d3n/.kube/kubeconfig"
-   export KUBECONFIG_CONTENT=$(cat "$KUBECONFIG" | base64 | tr -d '\n')
-   ```
-
-3. Install the chart with the following command (you can use `--debug`, if you wish):
-
-   ```bash
-   helm install <release-name> ocp-on-cnv --set secret.kubeconfigContent="$KUBECONFIG_CONTENT"
+   helm install <release-name> ocp-on-cnvx
    ```
 
    _Replace `<release-name>` with the name of your Helm deployment, as normal._
