@@ -26,17 +26,10 @@ To install this Helm chart, you need to first ensure you've met the prerequisite
 
 1. Clone this repository.
 
-2. Make sure that the `kubeconfig` for the cluster you want to install this chart to is exported, and in order to dynamically pass the `kubeconfig` to the chart as a base64 encoded string, you need run these commands (example shown below):
+2. Install the chart with the following command (you can use `--debug`, if you wish):
 
    ```bash
-   export KUBECONFIG="/Users/v1k0d3n/.kube/kubeconfig"
-   export KUBECONFIG_CONTENT=$(cat "$KUBECONFIG" | base64 | tr -d '\n')
-   ```
-
-3. Install the chart with the following command (you can use `--debug`, if you wish):
-
-   ```bash
-   helm install <release-name> ocp-on-cnv --set secret.kubeconfigContent="$KUBECONFIG_CONTENT"
+   helm install <release-name> ocp-on-cnv
    ```
 
    _Replace `<release-name>` with the name of your Helm deployment, as normal._
@@ -78,9 +71,6 @@ You can customize the deployment by modifying the `values.yaml` file. The follow
   - `route.tls.insecureEdgeTerminationPolicy`: The insecure edge termination policy for the route.
 
    The route configuration section may be turned into a map at some point in the future, which is in-line with the way that labels and annotations are handled today (currently it's only using single values in the Charts `values.yaml` file).
-
-- **Secrets Configuration**
-  - `secret.kubeconfigContent`: This will normally be left blank and provided at runtime with the install example (above), however if you're feeling spicy you can place your Base64 encoded kubeconfig output here instead.
 
 ## Networking Considerations
 
