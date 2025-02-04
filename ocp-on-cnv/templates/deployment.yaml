@@ -20,6 +20,7 @@ spec:
       labels:
         app: fakefish-{{ printf "%s-%02d" $vm.baseName $i }}-{{ $.Release.Namespace }}
     spec:
+      serviceAccountName: {{ $.Release.Namespace }}-serviceaccount
       containers:
         - name: fakefish
           image: {{ $.Values.fakefish.image }}
@@ -28,14 +29,4 @@ spec:
             - {{ printf "%s-%02d" $vm.baseName $i }}_{{ $.Release.Namespace }}
             - '--tls-mode'
             - disabled
-          env:
-            - name: KUBECONFIG
-              value: /var/tmp/kubeconfig
-          volumeMounts:
-            - name: kubevirt-kubeconfig
-              mountPath: /var/tmp/
-      volumes:
-        - name: kubevirt-kubeconfig
-          secret:
-            secretName: fakefish-kubevirt-kubeconfig
 {{- end }}
