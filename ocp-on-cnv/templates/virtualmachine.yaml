@@ -5,7 +5,7 @@ apiVersion: kubevirt.io/v1
 kind: VirtualMachine
 metadata:
   name: {{ printf "%s-%02d" $vm.baseName $i }}
-  namespace: {{ $.Release.Namespace }}
+  namespace: {{ $.Release.Name }}
   labels:
 {{- range $key, $value := $.Values.common.metadata.labels }}
     {{ $key }}: {{ $value }}
