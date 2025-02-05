@@ -32,6 +32,8 @@ To install this Helm chart, you need to first ensure you've met the prerequisite
    helm install <release-name> ocp-on-cnvx
    ```
 
+   _The `<release-name>` will create a namespace matching the `<release-name>`._
+
    _Replace `<release-name>` with the name of your Helm deployment, as normal._
 
 ## Configuration
